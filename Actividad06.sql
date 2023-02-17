@@ -1,19 +1,25 @@
 -- Utilizado MySQL
 
-CREATE DATABASE IF NOT exists PARQUES_NATURALES;
-use PARQUES_NATURALES;
+CREATE DATABASE IF NOT exists PATRIMONIO_NATURAL;
+use PATRIMONIO_NATURAL;
 
 -- CREACION DE TABLAS
+
+/*Se desactivan las resticciones para que no causen problemas a la hora de crear tablas e introducir datos */
 SET FOREIGN_KEY_CHECKS = 0;
+
 CREATE TABLE `VISITANTE`(
 `DNI` VARCHAR(25),
 `NOMBRE` VARCHAR(25),
 `DOMICILIO` VARCHAR(25),
 `PROFESION` VARCHAR(25));
 
+/*Indices para la tabla Visitante */
 ALTER TABLE `VISITANTE`
 ADD PRIMARY KEY (`DNI`),
 ADD KEY(`DNI`);
+
+/*Se establece DNI como no null para la tabla Visitante */
 ALTER TABLE `VISITANTE`
 MODIFY `DNI` VARCHAR(25) NOT NULL;
 
@@ -24,9 +30,13 @@ CREATE TABLE `EXCURSION`(
 `APIE` CHAR(2),
 `CODALOJAMIENTO` INT(15));
 
+
+/*Indices para la tabla Excursion */
 ALTER TABLE `EXCURSION`
 ADD PRIMARY KEY (`CODEXCURSION`),
 ADD KEY (`CODEXCURSION`);
+
+/*Se establece CodExcursion como no null para la tabla Visitante */
 ALTER TABLE `EXCURSION`
 MODIFY `CODEXCURSION` INT(15) NOT NULL;
 
@@ -34,6 +44,7 @@ CREATE TABLE `E_V`(
 `CODEXCURSION` INT(15),
 `DNI` VARCHAR(25));
 
+/*Indices y filtros para la tabla E_V */
 ALTER TABLE `E_V`
 ADD KEY (`CODEXCURSION`),
 ADD CONSTRAINT e_v_ibf_k1 FOREIGN KEY (`CODEXCURSION`) REFERENCES `EXCURSION`(`CODEXCURSION`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -46,13 +57,16 @@ CREATE TABLE `ALOJAMIENTO`(
 `CAPACIDAD` INT(15),
 `CODPN` INT(15));
 
+/*Indices para la tabla Alojamiento */
 ALTER TABLE `ALOJAMIENTO`
 ADD PRIMARY KEY (`CODALOJAMIENTO`),
 ADD KEY (`CODALOJAMIENTO`);
 
+/*Se establece CodAlojamiento como no null para la tabla Alojamiento */
 ALTER TABLE `ALOJAMIENTO`
 MODIFY `CODALOJAMIENTO` INT(15) NOT NULL;
 
+/*Filtros para la tabla Excursión. Se realiza una vez creada la tabla Alojamiento. */
 ALTER TABLE `EXCURSION`
 ADD CONSTRAINT excursion_ibf_k1 FOREIGN KEY (`CODALOJAMIENTO`) REFERENCES `ALOJAMIENTO`(`CODALOJAMIENTO`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
@@ -61,10 +75,12 @@ CREATE TABLE `COMUNIDADAUTONOMA`(
 `NOMBRE` VARCHAR(25),
 `ORGRESPONSABLE` VARCHAR(25));
 
+/*Indices para la tabla ComunidadAutonoma */
 ALTER TABLE `COMUNIDADAUTONOMA`
 ADD PRIMARY KEY (`CODCA`),
 ADD KEY(`CODCA`);
 
+/*Se establece CodCa como no null para la tabla ComundadAutonoma */
 ALTER TABLE `COMUNIDADAUTONOMA`
 MODIFY `CODCA` INT(15) NOT NULL;
 
@@ -74,6 +90,7 @@ CREATE TABLE `A_V`(
 `FECHAINICIO` DATE,
 `FECHAFIN`DATE);
 
+/*Indices y filtros para la tabla A_V */
 ALTER TABLE `A_V`
 ADD KEY (`CODALOJAMIENTO`),
 ADD CONSTRAINT a_v_ibf_k1 FOREIGN KEY (`CODALOJAMIENTO`) REFERENCES `ALOJAMIENTO`(`CODALOJAMIENTO`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -86,10 +103,12 @@ CREATE TABLE `ENTRADA`(
 `CODENTRADA` INT(15) ,
 `CODPN` INT(15));
 
+/*Indices para la tabla Entrada */
 ALTER TABLE `ENTRADA`
 ADD PRIMARY KEY (`CODENTRADA`),
 ADD KEY (`CODENTRADA`);
 
+/*Se establece CodEntrada como no null para la tabla Entrada */
 ALTER TABLE `ENTRADA`
 MODIFY `CODENTRADA` INT(15)  NOT NULL;
 
@@ -98,16 +117,23 @@ CREATE TABLE `PARQUENATURAL`(
 `NOMBRE` VARCHAR(25),
 `FECHADECLARACION` DATE);
 
+/*Indices para la tabla ParqueNatural */
 ALTER TABLE `PARQUENATURAL`
 ADD PRIMARY KEY (`CODPN`),
 ADD KEY(`CODPN`);
 
+/*Se establece CodPn como no null para la tabla ParqueNatural */
 ALTER TABLE `PARQUENATURAL`
 MODIFY `CODPN` INT(15)  NOT NULL;
 
+/*Existen algunos Alter Table que debido a que las FK se relacionan con tablas que aún no estaban creadas, no se pueden realizar 
+inmediatamente tras su tabla, se han de hacer una vez realizada la tabla con la que tendrán esa relación*/
+
+/*Filtros para la tabla Alojamiento */
 ALTER TABLE `ALOJAMIENTO`
 ADD CONSTRAINT alojamiento_ibf_k1 FOREIGN KEY (`CODPN` ) REFERENCES `PARQUENATURAL`(`CODPN` ) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Filtros para la tabla Entrada */
 ALTER TABLE `ENTRADA`
 ADD CONSTRAINT entrada_ibf_k1 FOREIGN KEY (`CODPN` ) REFERENCES `PARQUENATURAL`(`CODPN` ) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
@@ -116,6 +142,7 @@ CREATE TABLE `CA_PN`(
 `CODPN` INT(15),
 `SUPERFICIE` INT(15));
 
+/*Indices y filtros para la tabla CA_PN */
 ALTER TABLE `CA_PN`
 ADD KEY (`CODCA`),
 ADD CONSTRAINT ca_pn_ibf_k1 FOREIGN KEY (`CODCA`) REFERENCES `COMUNIDADAUTONOMA`(`CODCA`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -127,10 +154,12 @@ CREATE TABLE `ESPECIE`(
 `NOMBRECIENTIFICO` VARCHAR(25),
 `NOMBREVULGAR` VARCHAR(25));
 
+/*Indices para la tabla Especie */
 ALTER TABLE `ESPECIE`
 ADD PRIMARY KEY (`CODESPECIE`),
 ADD KEY (`CODESPECIE`);
 
+/*Se establece CodEspecie como no null para la tabla Especie */
 ALTER TABLE `ESPECIE`
 MODIFY `CODESPECIE` INT(15)  NOT NULL;
 
@@ -139,6 +168,7 @@ CREATE TABLE `E_A`(
 `NOMBREA` VARCHAR(25),
 `CANTIDIVIDUOS` INT(15));
 
+/*Filtros para la tabla E_A */
 ALTER TABLE `E_A`
 ADD KEY (`CODESPECIE`),
 ADD CONSTRAINT e_a_ibf_k1 FOREIGN KEY (`CODESPECIE`) REFERENCES `ESPECIE`(`CODESPECIE`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -149,6 +179,7 @@ CREATE TABLE `ANIMAL`(
 `ALIMENTACION` VARCHAR(25),
 `PERIODOCELO` VARCHAR(25));
 
+/*Filtros para la tabla Animal */
 ALTER TABLE `ANIMAL`
 ADD KEY (`CODESPECIE`),
 ADD CONSTRAINT animal_ibf_k1 FOREIGN KEY (`CODESPECIE`) REFERENCES `ESPECIE`(`CODESPECIE`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -158,6 +189,7 @@ CREATE TABLE `VEGETAL`(
 `FLORACION` VARCHAR(25),
 `PERIODOFLORACION` VARCHAR(25));
 
+/*Filtros para la tabla Vegetal */
 ALTER TABLE `VEGETAL`
 ADD KEY (`CODESPECIE`),
 ADD CONSTRAINT vegetal_ibf_k1 FOREIGN KEY (`CODESPECIE`) REFERENCES `ESPECIE`(`CODESPECIE`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -166,6 +198,7 @@ CREATE TABLE `MINERAL`(
 `CODESPECIE` INT(15),
 `TIPO` VARCHAR(25));
 
+/*Filtros para la tabla Mineral */
 ALTER TABLE `MINERAL`
 ADD KEY (`CODESPECIE`),
 ADD CONSTRAINT mineral_ibf_k1 FOREIGN KEY (`CODESPECIE`) REFERENCES `ESPECIE`(`CODESPECIE`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -180,12 +213,14 @@ CREATE TABLE `PERSONAL`(
 `SUELDO` INT(15),
 `CODPN` INT(15));
 
+/*Indices y filtros para la tabla Personal */
 ALTER TABLE `PERSONAL`
 ADD PRIMARY KEY (`DNI`),
 ADD KEY (`DNI`),
 ADD UNIQUE (`NSS`),
 ADD CONSTRAINT personal_ibf_k1 FOREIGN KEY (`CODPN`) REFERENCES `PARQUENATURAL`(`CODPN`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Se establece DNI como no null para la tabla Personal */
 ALTER TABLE `PERSONAL`
 MODIFY `DNI` VARCHAR(25)  NOT NULL;
 
@@ -194,6 +229,7 @@ CREATE TABLE `CONSERVADOR`(
 `TAREA` VARCHAR(25),
 `NOMBREA` VARCHAR(25));
 
+/*Filtros para la tabla Conservador */
 ALTER TABLE `CONSERVADOR`
 ADD KEY (`DNI`),
 ADD CONSTRAINT conservador_ibf_k1 FOREIGN KEY (`DNI`) REFERENCES `PERSONAL`(`DNI`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -202,6 +238,7 @@ CREATE TABLE `VIGILANTE`(
 `DNI` VARCHAR(25),
 `NOMBREA` VARCHAR(25));
 
+/*Indices y filtros para la tabla Vigilante */
 ALTER TABLE `VIGILANTE`
 ADD PRIMARY KEY (`DNI`),
 ADD KEY (`DNI`),
@@ -212,6 +249,7 @@ CREATE TABLE `INVESTIGADOR`(
 `DNI` VARCHAR(25),
 `TITULACION` VARCHAR(25));
 
+/*Indices y filtros para la tabla Investigador */
 ALTER TABLE `INVESTIGADOR`
 ADD KEY (`DNI`),
 ADD CONSTRAINT investigador_ibf_k1 FOREIGN KEY (`DNI`) REFERENCES `PERSONAL`(`DNI`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -220,6 +258,7 @@ CREATE TABLE `GESTOR`(
 `DNI` VARCHAR(25),
 `CODENTRADA` INT(15));
 
+/*Indices y filtros para la tabla Gestor */
 ALTER TABLE `GESTOR`
 ADD KEY (`DNI`),
 ADD CONSTRAINT gestor_ibf_k1 FOREIGN KEY (`DNI`) REFERENCES `PERSONAL`(`DNI`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -230,20 +269,25 @@ CREATE TABLE `AREA`(
 `EXTENSION` INT(15),
 `CODPN` INT(15));
 
+/*Indices y filtros para la tabla Area */
 ALTER TABLE `AREA`
 ADD PRIMARY KEY (`NOMBREA`),
 ADD KEY (`NOMBREA`),
 ADD CONSTRAINT area_ibf_k1 FOREIGN KEY (`CODPN`) REFERENCES `PARQUENATURAL`(`CODPN`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Se establece NombreA como no null para la tabla Area */
 ALTER TABLE `AREA`
 MODIFY `NOMBREA` VARCHAR(25)  NOT NULL;
 
+/*Indices y filtros para la tabla E_A */
 ALTER TABLE `E_A`
 ADD CONSTRAINT e_a_ibf_k2 FOREIGN KEY (`NOMBREA`) REFERENCES `AREA`(`NOMBREA`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Indices y filtros para la tabla Vigilante */
 ALTER TABLE `VIGILANTE`
 ADD CONSTRAINT vigilante_ibf_k2 FOREIGN KEY (`NOMBREA`) REFERENCES `AREA`(`NOMBREA`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Indices y filtros para la tabla Conservador */
 ALTER TABLE `CONSERVADOR`
 ADD CONSTRAINT conservador_ibf_k2 FOREIGN KEY (`NOMBREA`) REFERENCES `AREA`(`NOMBREA`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
@@ -252,15 +296,18 @@ CREATE TABLE `VEHICULO`(
 `TIPO` VARCHAR(25),
 `DNI` VARCHAR(25));
 
+/*Indices y filtros para la tabla Vehiculo */
 ALTER TABLE `VEHICULO`
 ADD PRIMARY KEY (`MATRICULA`),
 ADD KEY (`MATRICULA`),
 ADD KEY (`DNI`),
 ADD UNIQUE (`DNI`);
 
+/*Filtros para la tabla Vehiculo */
 ALTER TABLE `VEHICULO`
 ADD constraint vehiculo_ibf_k1 FOREIGN KEY  (`DNI`) REFERENCES `VIGILANTE` (`DNI`);
 
+/*Se establece Matricula como no null para la tabla Vehiculo */
 ALTER TABLE `VEHICULO`
 MODIFY `MATRICULA` varchar(15)  NOT NULL;
 
@@ -270,6 +317,7 @@ CREATE TABLE `I_P`(
 `CODPROY` INT(15),
 `DNI` VARCHAR(25));
 
+/*Indices para la tabla I_P */
 ALTER TABLE `I_P`
 ADD KEY (`CODPROY`),
 ADD KEY (`DNI`);
@@ -281,23 +329,27 @@ CREATE TABLE `PROYECTO`(
 `FECHAFIN` DATE,
 `CODESPECIE` INT(15));
 
+/*Indices para la tabla Proyecto */
 ALTER TABLE `PROYECTO`
 ADD PRIMARY KEY (`CODPROY`),
 ADD KEY (`CODPROY`),
 ADD CONSTRAINT proyecto_ibf_k1 FOREIGN KEY (`CODESPECIE`) REFERENCES `ESPECIE`(`CODESPECIE`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+/*Se establece Matricula como no null para la tabla Proyecto */
 ALTER TABLE `PROYECTO`
 MODIFY `CODPROY` INT(15)  NOT NULL;
 
+/*Filtros para la tabla I_P */
 ALTER TABLE `I_P`
 ADD CONSTRAINT ip_ibf_k2 FOREIGN KEY (`CODPROY`) REFERENCES `PROYECTO`(`CODPROY`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 
 
-SET FOREIGN_KEY_CHECKS = 1;
+
 
 -- INTRODUCCIÓN DE DATOS EN LAS TABLAS
-SET FOREIGN_KEY_CHECKS = 0;
+/*Se hace un Bulk Insert para poblar todas las tablas con datos*/
+
 INSERT INTO `VISITANTE`(`DNI`,`NOMBRE`,`DOMICILIO`,`PROFESION`) VALUES
 ('56712367K','ALMUDENA','C/ TORTOSA 1','MEDICA'),
 ('45698610P','MANUEL','C/ AMERICA 27','MECANICO'),
@@ -471,4 +523,17 @@ INSERT INTO `I_P`(`CODPROY`,`DNI`) VALUES
 (1687,'45678124C'),
 (1611,'39816580Z'),
 (1611,'47891839M');
+
+/*Se vuelven a activar las restricciones*/
 SET FOREIGN_KEY_CHECKS = 1;
+
+commit;
+
+/* Crear una vista que saque los DNI y la fecha, de las personas que han realizado una excursión a pie y ejecútala.*/
+Create view Visitantes_Pie as (select v.dni, x.fecha, x.apie as Excursion_a_pie
+								from visitante v join e_v e on v.dni = e.dni
+                                join excursion x on e.codexcursion = x.codexcursion
+                                where x.apie = 'SI');
+
+/*Creamos un select para ver la nueva vista creada.*/
+SELECT * FROM parques_naturales.visitantes_pie;
