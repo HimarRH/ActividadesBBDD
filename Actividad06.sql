@@ -536,4 +536,4 @@ Create view Visitantes_Pie as (select v.dni, x.fecha, x.apie as Excursion_a_pie
                                 where x.apie = 'SI');
 
 /*Creamos un select para ver la nueva vista creada.*/
-SELECT * FROM parques_naturales.visitantes_pie;
+SELECT * FROM patrimonio_natural.visitantes_pie;
