@@ -17,7 +17,7 @@ CREATE TABLE `ParqueNatural`(
 	`fechaDeclaracion` date
 );
 
-/*Indices parqueNatural*/
+/*PK - FK - Index*/
 ALTER TABLE `ParqueNatural`
 	ADD PRIMARY KEY(`codPN`),
 	ADD KEY(`codPN`);
@@ -31,7 +31,7 @@ CREATE TABLE `ComunidadAutonoma`(
 	`orgResponsable` varchar(25)
 );
 
-/*Indices ComunidadAutonoma*/
+/*PK - FK - Index*/
 ALTER TABLE `ComunidadAutonoma`
 	ADD PRIMARY KEY(`codCA`),
 	ADD KEY(`codCA`);
@@ -46,7 +46,7 @@ CREATE TABLE `CA-PN`(
 	`superficie` int(15)
 );
 
-/*Indices CA-PN*/
+/*PK - FK - Index*/
 ALTER TABLE `CA-PN`
 	ADD KEY(`codCA`),
 	ADD KEY(`codPN`);
@@ -63,7 +63,7 @@ CREATE TABLE `Visitante`(
 	`profesion` varchar(25)
 );
 
-/*Indices Visitante*/
+/*PK - FK - Index*/
 ALTER TABLE `Visitante`
 	ADD PRIMARY KEY(`DNI`),
 	ADD KEY(`DNI`);
